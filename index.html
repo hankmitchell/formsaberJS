@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<link rel="icon" type="image/png" href="http://silvercrayon.com/icon-png.png">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=400, initial-scale=.7">
+<title>formSaberJS The fastest form builder in the galaxy.</title>
+<link href="http://formsaber.com/f2.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Changa+One:400,400italic" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Saira+Semi+Condensed" rel="stylesheet">
+
+	<script src="formSaberJS.js"></script>
+<style type="text/css">
+body, td, th, a {
+	font-family: "segoe ui", "open sans", sans-serif;
+	font-size: 16px;
+}
+h1, h2, h3, h4 {
+	font-family: "segoe ui", "open sans", sans-serif;
+	font-weight: 300;
+}
+ <style type="text/css"> .kreon {
+font-size:16px;
+ font-family:kreon;
+}
+.Questrial {
+	font-size: 16px;
+	font-family: Questrial;
+}
+.sepline {
+	padding: 0px 10px;
+}
+.gwd-img-1qga {
+}
+.b1, .b1.a {
+	margin: 20px 0px;
+	border: 1px solid #E6E6E6;
+	border-radius: 3px;
+	padding: 10px;
+	color: #565656;
+	text-decoration: none;
+	cursor: pointer;
+}
+#paste {
+	min-height: 150px;
+	border: 3px dashed rgba(0, 0, 0, 0.3);
+	background: white;
+	padding: 20px 20px;
+	border-radius: 12px;
+	margin: 30px;
+	opacity: 0.5;
+	transition: all .5s;
+	font-family: "segoe ui", "open sans", sans-serif;
+	font-size: 16px;
+	width: 70%;/*resize: none;*/
+	height: 275px;
+}
+#paste:hover {
+	opacity: 1;
+	transition: all .5s;
+}
+#main {
+	margin: 0px 50px;
+}
+#results {
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #eee;
+	margin: 20px 0px 40px 0px;
+	display: none;
+}
+	.blueButton{
+		background: #318ad8;
+		color:white;
+	}
+	.pinkButton{
+		background: #099228;
+		color:white;
+	}
+	#topnav{
+		float:right;
+		margin-top: 25px;
+		margin-right: 25px;
+	}
+</style>
+</head>
+<body>
+
+<div id="topnav">
+<a href="https://www.youtube.com/watch?v=GjIFaC7_CN0" target="_blank" class="b1" style="margin-left:50px;">Explainer video</a> 
+  <a href="http://formsaber.com?path=from-library" target="_blank" class="b1">Commercial product</a><br>
+	</div>
+<div id="main">
+
+	<h1 style="font-size:80px;margin:0em;color:silver;">formSaberJS</h1>
+  <h2>Quickly build form code from pasted questions using the formSaberJS library. <br>
+  Dragging and dropping is fun, but pasting is much smarter. </h2>
+  <br>
+  
+  <button class="b1" onClick="showSample();">DEMO -  product survey</button>
+  <button class="b1" onClick="show100();">DEMO - 300+ question form</button>
+  <button class="b1" onClick="showFSML();">Show markup syntax</button>
+  <button class="b1" onClick="reset();">Reset</button>
+  <button class="b1 blueButton" onclick="buildForm();">Submit/Run</button>
+  <button  onClick="copyToClipboard('sdf');" style="display:none;" class="b1 blueButton pinkButton">Copy HTML</button>
+  <br>
+  
+  <div id="modal" style="display:none; border: 1px solid #E6E6E6;border-radius: 4px;padding: 22px;    background: white;font-family: segoe ui, open sans, sans-serif;line-height:1.6em; color:#464646"></div>
+  
+  
+  
+  <textarea  id="paste"  >Paste your form questions here.
+One on each line.
+formSaberJS can do tricks, read up on the markup language by clicking "Show markup syntax".
+Press submit and see what happens.
+Check out the source code to see how it works.
+Any questions?
+
+ACTION http://silvercrayon.com/fsendpoint/
+Paste your form questions here. HEADLINE
+Are you getting a sense of how this works? {yes,no}
+One on each line, right? CHECKBOX
+formSaberJS can do tricks, read up on the markup language by clicking "Show markup syntax". NOTE
+Do you agree that this is faster than some other options? CHECKBOX CHECKED
+Check out the source code to see how it works.
+Any questions? TEXTAREA</textarea>
+  <br>
+  
+  <button class="b1" onClick="showSample();">DEMO - product survey</button>
+  <button class="b1" onClick="show100();">DEMO - 300+ question form</button>
+  <button class="b1" onClick="showFSML();">Show markup syntax</button>
+  <button class="b1" onClick="reset();">Reset</button>
+  <button class="b1 blueButton" onclick="buildForm();">Submit/Run</button>
+  <button  onClick="copyToClipboard('sdf');" style="display:none;" class="b1 blueButton pinkButton">Copy HTML</button>
+  <div id="results"></div>
+  
+  <button class="b1 blueButton pinkButton" onClick="copyToClipboard('sdf');" style="display:none;">Copy HTML to clipboard</button>
+  
+  <div id="sdf" style="font-family: monospace; font-size:14px; width:60%;border: 1px solid #E6E6E6;border-radius: 4px;padding: 22px;background: #333b3c; color:white; ">Press submit  HTML output will appear here...</div>
+</div>
+<script>
+		
+		var paste = document.getElementById("paste");
+		var results = document.getElementById("results");
+		var closeButtonModal = `<button class="b1" onclick="closeWindow('modal');">close</button><br>`;
+	var closeButton = ``;
+	
+	
+	
+	function showSample(){
+		var paste = document.getElementById("paste");
+		var ccs = document.getElementById("sampleQuestions").textContent.replace(/<br>/ig,"\n");
+		paste.value=closeButton + ccs;	
+		}
+	
+	function show100(){
+		var paste = document.getElementById("paste");
+		var ccs = document.getElementById("onehundred").textContent.replace(/<br>/ig,"\n");
+		ccs = ccs.replace(/\n+\s+/ig,"\n");
+		paste.value=closeButton + ccs;
+		}
+	
+	
+	function reset(){
+		var ran = Math.floor((Math.random() * 10000) + 1);
+		window.location.assign("?reset="+ran);    
+		}
+	function showFSML(){
+		if(document.getElementById("modal").style.display!=="block"){
+			document.getElementById("modal").style.display="block";
+		} else{
+			document.getElementById("modal").style.display="none";
+		}
+		
+		document.getElementById("modal").innerHTML= closeButton + document.getElementById("FSML").innerHTML;
+		}
+	function closeWindow(win){
+			document.getElementById(win).style.display="none";
+		}
+
+
+	
+	
+
+	
+	
+	
+	function buildForm(){
+		
+		let htmlForm = formSaberJS("paste");
+		
+		
+		// check for action
+		
+		let fa = htmlForm.match(/<div id="formAction"[^>]+>(.*?)<\/div>/);
+		if (fa){
+			var formAction = fa[1].trim();
+			
+		} else{
+			var formAction = "";
+		}
+		
+		// check form method
+		let fm = htmlForm.match(/<div id="formMethod"[^>]+>(.*?)<\/div>/);
+		if (fm){
+			var formMethod = fm[1].trim();
+			
+		} else{
+			var formMethod = "post";
+		}
+		
+		
+		
+		
+		
+			let sourceForm = `<!-- 
+Begin formsaber processed output 
+formSaberJS is free software by Hank Mitchell - http://silvercrayon.com/fs/
+For working version with backend see http://formsaber.com/
+Contact Hank at hank@silvercrayon.com
+Enjoy your faster form building!
+-->
+
+
+<form enctype="multipart/form-data" action="${formAction}" method="${formMethod}" title="This form was build with formsaber.com - the fastest way to build forms directly from pasted questions - try for free - www.formsaber.com">${htmlForm}
+	<input type="submit" value="submit">
+	</form>
+
+
+
+<!-- END formsaber processed output -->`;
+		
+		
+		results.innerHTML = sourceForm;
+		//results.style.backgroundColor = "yellow";
+			results.style.display = "block";
+			function htmlEntities(str) {
+    		var entities = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+				entities = entities.replace(/\n/g,"<br>\n");
+				return(entities);
+	}
+		var escaped = htmlEntities(sourceForm);
+			document.getElementById("sdf").innerHTML = escaped;
+	let lateButtons = document.getElementsByClassName("blueButton");
+		for(var i = 0; i<lateButtons.length; i++){
+			lateButtons[i].style.display="inline-block";
+		}
+	}
+			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		function copyToClipboard( containerid ) {
+
+					
+					if ( document.selection ) {
+						var range = document.body.createTextRange();
+						range.moveToElementText( document.getElementById( containerid ) );
+						range.select().createTextRange();
+						document.execCommand( "Copy" );
+
+					} else if ( window.getSelection ) {
+						var range = document.createRange();
+						range.selectNode( document.getElementById( containerid ) );
+						console.log(range);
+						window.getSelection().addRange( range );
+						document.execCommand( "Copy" );
+
+					}
+					
+				
+				}
+			
+		</script>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+<div id="FSML" style="display:none;" >
+ <img src="key-syntax.png" style="width: 100%; opacity: 0.4;">
+  <strong>Syntax guide:</strong><br>
+  If the value is <strong>required</strong> include an <strong>asterisk *</strong> in the question like so: <strong>First Name *</strong><br>
+  If the value is a textarea (long multi-line answer) include the keyword <strong>TEXTAREA</strong> in the question like so: Comments <strong>TEXTAREA</strong><br>
+  If the value is a checkbox include the keyword <strong>CHECKBOX</strong> in the question like so: Please contact me <strong>CHECKBOX</strong> <br>
+  If the value is a checkbox AND it is checked by default include the keyword <strong>CHECKED</strong> in the question like so: Please contact me <strong>CHECKED</strong> <br>
+  If the value is a file upload, use the keyword <strong>FILE</strong><br>
+
+  If the value is a drop down menu, <strong>list the responses in curly brackets</strong> after the question &gt; {yes,no,maybe}<br>
+  If the value is a multiple selection checkbox menu, <strong>list the responses in square brackets</strong> after the question &gt; [start,middle,finish]<br>
+  If the value is a radio button group, <strong>list the responses in double curly brackets</strong> after the question &gt; {{start,middle,finish}}<br>
+  If the value is a separator or headline, include the keyword <strong>HEADLINE</strong> in the question like so: Part 2: Personal information <strong>HEADLINE</strong><br>
+  If the value is a note, include <strong>NOTE</strong> in the question like so: We use this information to better serve our customers <strong>NOTE</strong>
+  <br>
+  The form action can be specified by including <strong>ACTION</strong> in the question like so: ACTION http://silvercrayon.com/fsendpoint/ <br>The form method can be specified by including <strong>METHOD</strong> in the question <br>
+  <em>Becasue the action and method are not form inputs, but attributes, hidden divs are inserted into the form. Use the innerHTML method to access those values and  place them in the form tag.</em><br>
+<br>
+
+
+ <button class="b1" onclick="closeWindow('modal');">close</button>
+  
+  </div>
+  
+  
+  
+  
+  
+  
+  
+<div id="sampleQuestions" style="display:none;" >Product Survey HEADLINE
+
+Your opinion counts! NOTE
+
+How often do you typically use our product? {  Once a year, Daily, Weekly, Once a month, Every 2-3 months ,2-3 times a year, less often, Do not use  }
+Describe the overall quality in a few words TEXTAREA
+Our product performed as expected CHECKED
+Our product performed better than expected CHECKBOX
+Our product Usage experience {{Somewhat Satisfactory, Very Satisfactory, Delightfully}}
+After purchase service, warranty, repair, customer service etc: [Somewhat Satisfactory, Very Satisfactory, Delightfully]
+ACTION http://silvercrayon.com/fsendpoint/
+  METHOD         post
+  
+  
+</div>
+
+
+
+
+
+
+ <div id="onehundred" style="display:none;">Part : The Basics HEADLINE <br>
+  Name <br>
+  Email  <br>
+  Do you make online purchases?{yes,no,maybe,always,sometimes} <br>
+  Best time to reach you[am,pm,weekend,do not call] <br>
+  Title <br>
+  Marital status{married,single,rather not say} <br>
+  NOTE We use this information to better serve our customers <br>
+  What is your age <br>
+  NOTE We use this information to better serve our customers <br>
+  What do you like to do for fun <br>
+  What is your race <br>
+  Do you use Facebook{all the time,sometimes,almost never,never} <br>
+  Do you use Twitter{all the time,sometimes,almost never,never} <br>
+  Do you use Slack{all the time,sometimes,almost never,never} <br>
+  Do you use Skype{all the time,sometimes,almost never,never} <br>
+  Do you use Instagram{all the time,sometimes,almost never,never} <br>
+  Do you use Yahoo{all the time,sometimes,almost never,never} <br>
+  Do you use Google Plus{all the time,sometimes,almost never,never} <br>
+  How did you hear about us?{search,friend,TV ad,other} <br>
+  Twitter name <br>
+  Linkedin URL <br>
+  How often do you typically use the product?{Once a year,Daily,Weekly,Once a month,Every months, times a year,less often,Do not use } <br>
+  How did your (PRODUCT) perform? HEADLINE <br>
+  Overall quality{Miserably,Somewhat Satisfactory,Very Satisfactory,Delightfully} <br>
+  Value{Miserably,Somewhat Satisfactory,Very Satisfactory,Delightfully} <br>
+  Purchase experience{Miserably,Somewhat Satisfactory,Very Satisfactory,Delightfully} <br>
+  Installation or first use experience{Miserably,Somewhat Satisfactory,Very Satisfactory,Delightfully} <br>
+  Usage experience{Miserably,Somewhat Satisfactory,Very Satisfactory,Delightfully} <br>
+  After purchase service (warranty, repair, customer service etc){Miserably,Somewhat Satisfactory,Very Satisfactory,Delightfully} <br>
+  How important was performance on these attributes?HEADLINE <br>
+  Overall quality{Not Important,Somewhat Important,Important,Very Important} <br>
+  Value{Not Important,Somewhat Important,Important,Very Important} <br>
+  Purchase experience{Not Important,Somewhat Important,Important,Very Important} <br>
+  Installation or first use experience{Not Important,Somewhat Important,Important,Very Important} <br>
+  Usage experience{Not Important,Somewhat Important,Important,Very Important} <br>
+  After purchase service (warranty, repair, customer service etc){Not Important,Somewhat Important,Important,Very Important} <br>
+  Overall how satisfied were you with your new (PRODUCT)?{Not at all satisfied,Somewhat Satisfied,Satisfied,Very Satisfied,Delighted} <br>
+  Have you ever contacted customer service?{Yes,No} <br>
+  If you contacted (COMPANY) customer service, have all problems been resolved to your complete satisfaction?{Yes by the company or its representatives, Yes by me or someone outside the company, No the problem was not resolved} <br>
+  Based on your awareness of (PRODUCT/SERVICE),is it better, the same, or worse than other brands of (ENTER CATEGORY}?{Much Better,Better,About the same,Worse,Much Worse} <br>
+  Please share with us a few things (Product/Service) could do better. TEXTAREA <br>
+  Based on your experience with (PRODUCT), how likely are you to buy (PRODUCT) again?{Definitely will,Probably will,Might or might not,Probably will not,Definitely will not} <br>
+  Based on your experience with (PRODUCT), would you recommend this product to a friend?{Definitely will,Probably will,Might or might not,Probably will not,Definitely will not} <br>
+  If you would like to share any additional comments or experiences about (PRODUCT), please enter them below. TEXTAREA <br>
+  Social Security Number <br>
+  Are you a Citizen of the U.S.A.?{yes,no} <br>
+  How do you plan to get to work?[Mass Transit,auto,other] <br>
+  Name and Phone Number of the Person to be Notified for Emergency <br>
+  Have you ever been convicted of a felony or misdemeanor (other than a traffic violation)?{yes,no} <br>
+  If you answered &ldquo;Yes&rdquo; to question above please explain TEXTAREA <br>
+  Your age{under 18 ,16 ,21 OR OLDER} <br>
+  Name of Junior High School and Address TEXTAREA <br>
+  Dates Attended From (mo/yr) and To (mo/yr) <br>
+  Name of High School and Address TEXTAREA <br>
+  Dates Attended From (mo/yr) and To (mo/yr) <br>
+  Did you Graduate?{yes,no} <br>
+  Average <br>
+  Name of College and Address TEXTAREA <br>
+  Dates Attended From (mo/yr) and To (mo/yr) <br>
+  Did you Graduate?{yes,no} <br>
+  Number of College Credit Hours <br>
+  Major <br>
+  Average <br>
+  Name of Other Institution and Address TEXTAREA <br>
+  Dates Attended From (mo/yr) and To (mo/yr) <br>
+  Did you Graduate?{yes,no} <br>
+  Number of Credit Hours <br>
+  Major <br>
+  Average <br>
+  Extracurricular Activities TEXTAREA <br>
+  Currently enrolled in High School/Study program?{yes,no} <br>
+  Hourly Starting Wage Desired <br>
+  Date Available to start <br>
+  Days and Times Available to Work TEXTAREA <br>
+  hobbies and special interests TEXTAREA <br>
+  Company No. (Present or most recent employer) <br>
+  Address/Phone Number TEXTAREA <br>
+  Employed (Mo/Yr) From <br>
+  Employed (Mo/Yr) To <br>
+  Rate of Pay Starting <br>
+  Rate of Pay Ending <br>
+  Average Number of Hours worked per week <br>
+  Position(s) held <br>
+  Supervisor&rsquo;s Name/Position <br>
+  Describe your Duties TEXTAREA <br>
+  May we contact this employer?{yes,no} <br>
+  Reason for Leaving <br>
+  Days Lost from work due to illness <br>
+  Days Lost from work due to injury <br>
+  Days Lost from work due to other <br>
+  Company No.  <br>
+  Address/Phone Number TEXTAREA <br>
+  Employed (Mo/Yr) From <br>
+  Employed (Mo/Yr) To <br>
+  Rate of Pay Starting <br>
+  Rate of Pay Ending <br>
+  Average Number of Hours worked per week <br>
+  Position(s) held <br>
+  Supervisor&rsquo;s Name/Position <br>
+  Describe your Duties TEXTAREA <br>
+  May we contact this employer?{yes,no} <br>
+  Reason for Leaving <br>
+  Days Lost from work due to illness
+  If you didn’t have to sleep, what would you do with the extra time?<br>
+  What’s your favorite piece of clothing you own / owned?<br>
+  What hobby would you get into if time and money weren’t an issue?<br>
+  What would your perfect room look like?<br>
+  How often do you play sports?<br>
+  What fictional place would you most like to go?<br>
+  What job would you be terrible at?<br>
+  When was the last time you climbed a tree?<br>
+  If you could turn any activity into an Olympic sport, what would you have a good chance at winning medal for?<br>
+  What is the most annoying habit that other people have?<br>
+  What job do you think you’d be really good at?<br>
+  What skill would you like to master?<br>
+  What would be the most amazing adventure to go on?<br>
+  If you had unlimited funds to build a house that you would live in for the rest of your life, what would the finished house be like?<br>
+  What’s your favorite drink?<br>
+  What state or country do you never want to go back to?<br>
+  What songs have you completely memorized?<br>
+  What game or movie universe would you most like to live in?<br>
+  What do you consider to be your best find?<br>
+  Are you usually early or late?<br>
+  What pets did you have while you were growing up?<br>
+  When people come to you for help, what do they usually want help with?<br>
+  What takes up too much of your time?<br>
+  What do you wish you knew more about?<br>
+  What would be your first question after waking up from being cryogenically frozen for 100 years?<br>
+  What are some small things that make your day better?<br>
+  Who’s your go to band or artist when you can’t decide on something to listen to?<br>
+  What shows are you into?<br>
+  What TV channel doesn’t exist but really should?<br>
+  Who has impressed you most with what they’ve accomplished?<br>
+  What age do you wish you could permanently be?<br>
+  What TV show or movie do you refuse to watch?<br>
+  What would be your ideal way to spend the weekend?<br>
+  What is something that is considered a luxury, but you don’t think you could live without?<br>
+  What’s your claim to fame?<br>
+  What’s something you like to do the old-fashioned way?<br>
+  What’s your favorite genre of book or movie?<br>
+  How often do you people watch?<br>
+  What have you only recently formed an opinion about?<br>
+  What’s the best single day on the calendar?<br>
+  What are you interested in that most people haven’t heard of?<br>
+  How do you relax after a hard day of work?<br>
+  What was the best book or series that you’ve ever read?<br>
+  What’s the farthest you’ve ever been from home?<br>
+  What is the most heartwarming thing you’ve ever seen?<br>
+  What is the most annoying question that people ask you?<br>
+  What could you give a 40-minute presentation on with absolutely no preparation?<br>
+  If you were dictator of a small island nation, what crazy dictator stuff would you do?<br>
+  What is something you think everyone should do at least once in their lives?<br>
+  Would you rather go hang gliding or whitewater rafting?<br>
+  What’s your dream car?<br>
+  What’s worth spending more on to get the best?<br>
+  What is something that a ton of people are obsessed with but you just don’t get the point of?<br>
+  What are you most looking forward to in the next 10 years?<br>
+  Where is the most interesting place you’ve been?<br>
+  What’s something you’ve been meaning to try but just haven’t gotten around to it?<br>
+  What’s the best thing that happened to you last week?<br>
+  What piece of entertainment do you wish you could erase from your mind so that you could experience for the first time again?<br>
+  If all jobs had the same pay and hours, what job would you like to have?<br>
+  What amazing thing did you do that no one was around to see?<br>
+  How different was your life one year ago?<br>
+  What’s the best way to start the day?<br>
+  What quirks do you have?<br>
+  What would you rate 10 / 10?<br>
+  What fad or trend do you hope comes back?<br>
+  What’s the most interesting piece of art you’ve seen?<br>
+  What kind of art do you enjoy most?<br>
+  What do you hope never changes?<br>
+  What city would you most like to live in?<br>
+  What movie title best describes your life?<br>
+  Why did you decide to do the work you are doing now?<br>
+  What’s the best way a person can spend their time?<br>
+  If you suddenly became a master at woodworking, what would you make?<br>
+  Where is the most relaxing place you’ve ever been?<br>
+  What is the luckiest thing that has happened to you?<br>
+  Where would you rather be from?<br>
+  What are some things you’ve had to unlearn?<br>
+  What are you looking forward to in the coming months?<br>
+  What website do you visit most often?<br>
+  What one thing do you really want but can’t afford?<br>
+  Where do you usually go when you when you have time off?<br>
+  Where would you spend all your time if you could?<br>
+  What is special about the place you grew up?<br>
+  What age do you want to live to?<br>
+  What are you most likely to become famous for?<br>
+  What are you absolutely determined to do?<br>
+  What is the most impressive thing you know how to do?<br>
+  What do you wish you knew more about?<br>
+  What question would you most like to know the answer to?<br>
+  Somewhat personal questions to get to know someone<br>
+  What question can you ask to find out the most about a person?<br>
+  When was the last time you changed your opinion / belief about something major?<br>
+  What was the best compliment you’ve received?<br>
+  As the only human left on Earth, what would you do?<br>
+  Who inspires you to be better?<br>
+  What do you want your epitaph to be?<br>
+  What did you think you would grow out of but haven’t?<br>
+  In what situation or place would you feel the most out of place in?<br>
+  What’s the dumbest thing you’ve done that actually turned out pretty well?<br>
+  They say that everyone has a book in them. What would your book be about?<br>
+  What is something you will NEVER do again?<br>
+  What do you spend the most time thinking about?<br>
+  What are some of the events in your life that made you who you are?<br>
+  What do you wish your brain was better at doing?<br>
+  There are two types of people in this world. What are the two types?<br>
+  What is the strangest thing you have come across?<br>
+  What is something you are certain you’ll never experience?<br>
+  What dumb accomplishment are you most proud of?<br>
+  If you could make one rule that everyone had to follow, what rule would you make?<br>
+  What are you addicted to?<br>
+  What stereotype do you completely live up to?<br>
+  What is something you can never seem to finish?<br>
+  As you get older, what are you becoming more and more afraid of?<br>
+  What is one of your favorite smells?<br>
+  What would be the scariest monster you could imagine?<br>
+  What song or artist do you like but rarely admit to liking?<br>
+  What would you do if you knew you were going to die in one hour?<br>
+  What book impacted you the most?<br>
+  If you had to change your name, what would you change it to?<br>
+  If life is a game, like some people say, what are some of the rules?<br>
+  Who is / was your most interesting friend?<br>
+  Have you ever given to any charities?<br>
+  What is something that your friends would consider “so you”?<br>
+  What risks are worth taking?<br>
+  What can you not get right, no matter how many times you try?<br>
+  If you could convince everyone in the world to do one thing at one point in time, what would that thing be?<br>
+  What do you take for granted?<br>
+  What would be some of the most annoying things about having yourself as a roommate?<br>
+  What’s something you are self-conscious about?<br>
+  What personality trait do you value most and which do you dislike the most?<br>
+  What small gesture from a stranger made a big impact on you?<br>
+  What gets you fired up?<br>
+  What challenging thing are you working through these days?<br>
+  What irrational fear do you have?<br>
+  What’s the best and worst piece of advice you’ve ever received?<br>
+  If you had a clock that would countdown to any one event of your choosing, what event would you want it to countdown to?<br>
+  What makes a good life?<br>
+  What do you strongly suspect but have no proof of?<br>
+  What’s the last adventure you went on?<br>
+  When do you feel truly “alive”?<br>
+  What was the most memorable gift you’ve received?<br>
+  What chapters would you separate your autobiography into?<br>
+  What do you like most about your family?<br>
+  What do you hope your last words will be?<br>
+  What stat for your life would you most like to see?<br>
+  What are three of the most significant numbers in your life?<br>
+  What could you do with two million dollars to impact the most amount of people?<br>
+  If you were put into solitary confinement for six months, what would you do to stay sane?<br>
+  What’s something horrible that everyone should try at least once?<br>
+  What fact are your resigned to?<br>
+  Have you ever saved someone’s life?<br>
+  What were some of the turning points in your life?<br>
+  What would a mirror opposite of yourself be like?<br>
+  What are you really good at, but kind of embarrassed that you are good at it?<br>
+  What are three interesting facts about you?<br>
+  Which of your scars has the best story behind it?<br>
+  What’s the title of the current chapter of your life?<br>
+  What’s the hardest lesson you’ve learned?<br>
+  What mistake do you keep making again and again?<br>
+  What do people think is weird about you?<br>
+  When people look at you, what do you think they see / think?<br>
+  What have you created that you are most proud of?<br>
+  If you could make a 20 second phone call to yourself at any point in your life present or future, when would you call and what would you say?<br>
+  What annoys you most about the in-groups you are a part of?<br>
+  What do you have doubts about?<br>
+  What do you want to be remembered for?<br>
+  What are some of your personal “rules” that you never break?<br>
+  What do you regret not doing or starting when you were younger?<br>
+  If you could have a never-ending candle that smelled like anything you wanted, what fragrance would you want it to be?<br>
+  What’s the best thing about you?<br>
+  What bends your mind every time you think about it?<br>
+  What’s the best thing you got from your parents?<br>
+  What’s one responsibility you really wish you didn’t have?<br>
+  What is the “holy grail” of your life?<br>
+  If your childhood had a smell, what would it be?<br>
+  What are the top three things you want to accomplish before you die? How close are you to accomplishing them?<br>
+  What do you wish you could tell yourself 10 years ago? What do you think you’ll want to tell your current self 10 years from now?<br>
+  In your group of friends, what role do you play?<br>
+  Among your friends or family, what are you famous for?<br>
+  What is the biggest lesson you never learned?<br>
+  What’s the most immature thing that you do?<br>
+  Open book<br>
+  If your life was a book, what would its title be?<br>
+  What’s the best and worst thing about getting older?<br>
+  What’s something that happened or something that someone said that changed how you view the world?<br>
+  What are you most likely very wrong about?<br>
+  If you had a personal flag, what would be on it?<br>
+  What lifestyle change have you been meaning to make for a while now?<br>
+  What would be your spirit animal?<br>
+  What incredibly strong opinion or belief do you have that is completely unimportant in the grand scheme of things?<br>
+  What chance encounter changed your life forever?<br>
+  If you could have a video of any one event in your life, what event would you choose?<br>
+  If you were forced to relive one 10-minute block of your life again and again for all eternity, what 10 minutes of your life would you choose?<br>
+  Very personal questions to get to know someone better<br>
+  How do you hope you’ll change as a person in the future?<br>
+  What keeps you up at night?<br>
+  What’s the most surprising self-realization you’ve had?<br>
+  What’s the most illegal thing you’ve done?<br>
+  What lie do you tell most often?<br>
+  What do you regret not doing?<br>
+  What gives your life meaning?<br>
+  What do you most often look down on people for? What do you think other people look down on you for?<br>
+  What bridges do you not regret burning?<br>
+  What are you most insecure about?<br>
+  How do you get in the way of your own success?<br>
+  What’s one thing you did that you really wish you could go back and undo?<br>
+  What are you afraid people see when they look at you?
+
+
+
+
+  ACTION http://silvercrayon.com/fsendpoint/
+  METHOD         post
+  </div>
+  
+</body>
+</html>

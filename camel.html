@@ -1,0 +1,54 @@
+<!--
+<?
+extract($_GET);
+extract($_POST);
+date_default_timezone_set('America/New_York'); 
+$loc = '//'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+if (preg_match('/\?/',$loc)){
+//$mode = "CMS";
+//$ls=1;
+}
+?>
+-->
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+
+<body>
+<div id="main">
+  <h1 id="hank">Dragging             and                   dropping is fun, but pasting is much smarter.</h1>
+  <h2>Javascript form utility. Quickly build form code from pasted questions.</h2>
+  <br>
+</div>
+<div contenteditable id="cam">SS134234   23Dragging     throught t-he mud        and                   dropping is fun, but pasting is much smarter.</div>
+<br>
+<br>
+<button onclick="update();">play</button>
+<script>
+		
+
+	
+	function update(){
+		
+		document.getElementById("hank").innerHTML = camelCase(document.getElementById("cam").innerHTML);
+	}
+	
+	
+	
+	function camelCase(str){
+		str = str.replace(/^[^a-z]+/ig," ");
+		str = " "+str.trim();
+		let g = str.match(/\s\S/ig);
+		for(var i=0;i<g.length;i++){
+				str = str.replace(g[i], g[i].trim().toUpperCase());
+			}
+		str = str.replace(/[^a-zA-Z0-9]+/ig,'');
+		str = str.charAt(0).toLocaleLowerCase() + str.slice(1);
+		return(str);
+	}
+	
+	
+	
+	</script> 
